@@ -7,11 +7,9 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 
-
 def load_data():
     """Load the used car data set."""
     column_names = [
-        "index",
         "dateCrawled",
         "name",
         "seller",
@@ -32,16 +30,14 @@ def load_data():
         "postalCode",
         "lastSeen",
     ]
-    df_auto = pd.read_csv("/Users/brocktbennett/GitHub/UsedCarValueEstimator/autos.csv", header=0, names=column_names)
+    df_auto = pd.read_csv("autos.csv", header=0, names=column_names)
 
     return df_auto
 
-
 def clean_data(df_auto):
     """Clean the used car data set."""
-
     df_auto.drop(
-        ["index", "dateCrawled", "name", "dateCreated", "lastSeen"], axis=1, inplace=True
+        ["dateCrawled", "name", "dateCreated", "lastSeen"], axis=1, inplace=True
     )
 
     cat_columns = [
@@ -53,7 +49,6 @@ def clean_data(df_auto):
         "model",
         "brand",
         "notRepairedDamage",
-        "fuelType",
     ]
     df_auto = pd.get_dummies(df_auto, columns=cat_columns)
     df_auto["fuelType"] = df_auto["fuelType"].fillna("missing")
@@ -62,10 +57,8 @@ def clean_data(df_auto):
 
     return df_auto
 
-
 def train_and_evaluate_models(df_auto):
     """Train and evaluate the linear regression and random forest models."""
-
     X = df_auto.drop("price", axis=1)
     y = df_auto["price"]
 
@@ -82,13 +75,11 @@ def train_and_evaluate_models(df_auto):
     print("Linear Regression RMSE:", np.sqrt(mean_squared_error(y_test, y_pred_lin_reg)))
     print("Random Forest RMSE:", np.sqrt(mean_squared_error(y_test, y_pred_rf)))
 
-
 def main():
     """Load the data, clean it, train and evaluate the models."""
     df_auto = load_data()
     df_auto = clean_data(df_auto)
     train_and_evaluate_models(df_auto)
-
 
 if __name__ == "__main__":
     main()
